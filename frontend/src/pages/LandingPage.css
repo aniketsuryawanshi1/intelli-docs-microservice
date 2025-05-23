@@ -1,0 +1,143 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.landing-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa 0%, #fce4ec 100%);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #0d47a1;
+  padding: 3rem 5%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.landing-left {
+  flex: 1;
+  max-width: 600px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logo-icon {
+  font-size: 3rem;
+  animation: pulse 2s infinite;
+}
+
+.project-name {
+  font-weight: 900;
+  font-size: 3rem;
+  letter-spacing: 0.05em;
+}
+
+.slogan {
+  font-size: 1.3rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+  color: #3949abcc;
+}
+
+.button-group {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #1e88e5, #00bcd4);
+  color: white;
+  box-shadow: 0 4px 15px rgba(30, 136, 229, 0.5);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(90deg, #1565c0, #0097a7);
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.7);
+  transform: scale(1.05);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #1e88e5;
+  border: 2px solid #1e88e5;
+}
+
+.btn-outline:hover {
+  background: #1e88e5;
+  color: white;
+  box-shadow: 0 4px 15px rgba(30, 136, 229, 0.5);
+  transform: scale(1.05);
+}
+
+.landing-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-svg {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  stroke: #1e88e5;
+  animation: svg-float 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    color: #1e88e5;
+  }
+  50% {
+    transform: scale(1.1);
+    color: #00bcd4;
+  }
+}
+
+@keyframes svg-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .landing-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .landing-left,
+  .landing-right {
+    max-width: 100%;
+  }
+  .button-group {
+    justify-content: center;
+  }
+  .landing-right {
+    margin-top: 3rem;
+  }
+}
