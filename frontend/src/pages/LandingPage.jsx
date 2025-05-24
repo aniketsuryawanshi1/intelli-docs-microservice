@@ -1,7 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="landing-container">
       <div className="landing-left">
@@ -16,8 +19,18 @@ const LandingPage = () => {
           ask questions with cutting-edge NLP technology.
         </p>
         <div className="button-group">
-          <button className="btn btn-primary">Get Started</button>
-          <button className="btn btn-outline">Login / Register</button>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/register")}
+          >
+            Get Started
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
         </div>
       </div>
 

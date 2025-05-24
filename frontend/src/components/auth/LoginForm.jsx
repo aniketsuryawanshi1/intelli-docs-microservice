@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../features/auth/authThunks"; // Adjust path as needed
+import { loginUser } from "../../features/auth/authThunks";
 import { useNavigate } from "react-router-dom";
 import AuthInput from "./AuthInput";
 import LoadingOverlay from "./LoadingOverlay";
-
+import { IconUserCircle, IconKey } from "@tabler/icons-react";
+import Swal from "sweetalert2";
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,15 +20,25 @@ const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login(form))
+    dispatch(loginUser(form))
       .unwrap()
-      .then(() => navigate("/"))
-      .catch(() => {});
+      .then(() => {
+        Swal.fire("Success", "Login successful!", "success");
+        navigate("/dashboard");
+      })
+      .catch((err) => {
+        Swal.fire("Error", err?.message || err || "Login failed", "error");
+      });
   };
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
-      <h2 className="auth-tagline">Login</h2>
+      <h2 className="auth-tagline">
+        Welcome Back!{" "}
+        <span className="wave-emoji" role="img" aria-label="wave">
+          👋
+        </span>
+      </h2>
       {loading && <LoadingOverlay />}
       {error && <p className="error">{error}</p>}
       <AuthInput
@@ -37,6 +48,7 @@ const LoginForm = () => {
         value={form.email}
         onChange={handleChange}
         required
+        IconComponent={IconUserCircle} // <-- pass user icon here
       />
       <AuthInput
         label="Password"
@@ -48,10 +60,15 @@ const LoginForm = () => {
         showToggle
         showPassword={showPassword}
         onToggle={() => setShowPassword((v) => !v)}
+        IconComponent={IconKey} // <-- pass key icon here
       />
       <button type="submit" className="btn-auth" disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
+
+      <p className="register-prompt">
+        Don’t have an account? <a href="/register">Register now</a>
+      </p>
     </form>
   );
 };

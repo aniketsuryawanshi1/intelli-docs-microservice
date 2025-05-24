@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../../features/auth/authThunks"; // Adjust path as needed
+import { registerUser } from "../../features/auth/authThunks";
 import { useNavigate } from "react-router-dom";
 import AuthInput from "./AuthInput";
 import LoadingOverlay from "./LoadingOverlay";
-
+import { IconUserCircle, IconMail, IconKey } from "@tabler/icons-react";
+import Swal from "sweetalert2";
 const RegisterForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,26 +27,45 @@ const RegisterForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (form.password !== form.password2) {
-      // You can set a local error state here if you want
+      Swal.fire("Error", "Passwords do not match", "error");
       return;
     }
-    dispatch(register(form))
+    dispatch(registerUser(form))
       .unwrap()
-      .then(() => navigate("/"))
-      .catch(() => {});
+      .then(() => {
+        Swal.fire(
+          "Success",
+          "Registration successful! Please login.",
+          "success"
+        );
+        navigate("/login");
+      })
+      .catch((err) => {
+        Swal.fire(
+          "Error",
+          err?.message || err || "Registration failed",
+          "error"
+        );
+      });
   };
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
-      <h2 className="auth-tagline">Register</h2>
+      <h2 className="auth-tagline">
+        Create your account{" "}
+        <span className="wave-emoji" role="img" aria-label="wave">
+          ✨
+        </span>
+      </h2>
       {loading && <LoadingOverlay />}
-      {error && <p className="error">{error}</p>}
+      {error && Swal.fire("Error", error, "error")}
       <AuthInput
         label="Username"
         type="text"
         name="username"
         value={form.username}
         onChange={handleChange}
+        IconComponent={IconUserCircle}
         required
       />
       <AuthInput
@@ -55,6 +75,7 @@ const RegisterForm = () => {
         value={form.email}
         onChange={handleChange}
         required
+        IconComponent={IconMail}
       />
       <AuthInput
         label="Password"
@@ -66,6 +87,7 @@ const RegisterForm = () => {
         showToggle
         showPassword={showPassword}
         onToggle={() => setShowPassword((v) => !v)}
+        IconComponent={IconKey}
       />
       <AuthInput
         label="Confirm Password"
@@ -77,10 +99,15 @@ const RegisterForm = () => {
         showToggle
         showPassword={showPassword2}
         onToggle={() => setShowPassword2((v) => !v)}
+        IconComponent={IconKey}
       />
       <button type="submit" className="btn-auth" disabled={loading}>
         {loading ? "Registering..." : "Register"}
       </button>
+
+      <p className="login-prompt">
+        Already have an account? <a href="/login">Login here</a>
+      </p>
     </form>
   );
 };

@@ -1,4 +1,4 @@
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 // Check if token is valid and not expired
 export function isTokenValid(token) {

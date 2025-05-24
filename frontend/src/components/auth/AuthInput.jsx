@@ -1,4 +1,5 @@
 import React from "react";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 
 const AuthInput = ({
   label,
@@ -10,6 +11,7 @@ const AuthInput = ({
   showToggle,
   showPassword,
   onToggle,
+  IconComponent,
   ...rest
 }) => (
   <div className="input-group">
@@ -17,6 +19,7 @@ const AuthInput = ({
       {label} <span className="asterisk">*</span>
     </label>
     <div className="input-wrapper">
+      {IconComponent && <IconComponent size={20} className="input-icon" />}
       <input
         type={showToggle && showPassword ? "text" : type}
         id={name}
@@ -33,7 +36,7 @@ const AuthInput = ({
           onClick={onToggle}
           style={{ cursor: "pointer" }}
         >
-          {showPassword ? "🙈" : "👁️"}
+          {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
         </span>
       )}
     </div>

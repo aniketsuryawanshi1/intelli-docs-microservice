@@ -71,17 +71,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL='authenticaion.User'
+AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_ALL_ORIGINS = False  # Better security
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:4173",
     "http://frontend_service:80",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:4173",
     "http://frontend_service",
 ]
 

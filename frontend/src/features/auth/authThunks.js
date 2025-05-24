@@ -8,8 +8,16 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.post("register/", userData);
-      // Expecting { user, access, refresh }
-      return response.data;
+      // Map backend response to expected Redux state
+      return {
+        user: {
+          id: response.data.id,
+          username: response.data.username,
+          email: response.data.email,
+        },
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+      };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.detail || "Registration failed"
@@ -24,8 +32,16 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.post("login/", credentials);
-      // Expecting { user, access, refresh }
-      return response.data;
+      // Map backend response to expected Redux state
+      return {
+        user: {
+          id: response.data.id,
+          username: response.data.username,
+          email: response.data.email,
+        },
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+      };
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || "Login failed");
     }
