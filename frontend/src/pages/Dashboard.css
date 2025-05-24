@@ -1,0 +1,259 @@
+/* General layout */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  font-family: "Nunito", sans-serif;
+  background: #f0f4f8;
+  color: #1e293b;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
+}
+
+.header .user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.header .user-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.header .user-email {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+/* Upload section */
+.upload-section {
+  background: white;
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.upload-section input[type="file"] {
+  flex: 1;
+}
+
+.upload-section button {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-section button:hover {
+  background-color: #2563eb;
+}
+
+/* Documents table container */
+.documents-container {
+  margin: 1rem 2rem 3rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.1);
+  overflow-x: auto;
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.documents-table thead {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.documents-table th,
+.documents-table td {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.documents-table tbody tr:hover {
+  background-color: #eff6ff;
+}
+
+/* Action buttons in the table */
+.action-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  margin-right: 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  color: #3b82f6;
+}
+
+.action-btn:hover {
+  background-color: #bfdbfe;
+}
+
+/* Modal for Q&A */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(30, 41, 59, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.modal {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1e293b;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  font-weight: 700;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #111827;
+}
+
+/* Q&A content */
+.qa-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #f9fafb;
+}
+
+.qa-message {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.qa-message.user {
+  text-align: right;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.qa-message.ai {
+  text-align: left;
+  color: #4b5563;
+  font-style: italic;
+}
+
+/* Input area */
+.qa-input-container {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.qa-input-container input[type="text"] {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  outline-offset: 2px;
+  outline-color: #3b82f6;
+}
+
+.qa-input-container button {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.qa-input-container button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.qa-input-container button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+/* Confirmation message */
+.confirmation {
+  margin: 0 2rem 1rem 2rem;
+  padding: 0.8rem 1rem;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid #10b981;
+  max-width: 500px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .upload-section {
+    flex-direction: column;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .documents-container {
+    margin: 1rem;
+  }
+}

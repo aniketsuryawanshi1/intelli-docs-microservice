@@ -1,151 +1,257 @@
-import React from "react";
-import {
-  Button,
-  Group,
-  Text,
-  Avatar,
-  Container,
-  Title,
-  Paper,
-  Box,
-  Divider,
-  Transition,
-  rem,
-} from "@mantine/core";
-import {
-  IconLogout,
-  IconUser,
-  IconFileText,
-  IconCloudUpload,
-} from "@tabler/icons-react";
-import useAuth from "../hooks/useAuth";
+import React, { useState, useEffect, useRef } from "react";
+import useAuth from "../hooks/useAuth"; // Your auth hook
+import "./Dashboard.css";
 
-const Dashboard = () => {
+function Dashboard() {
   const { user, logout } = useAuth();
 
+  // Documents state (example dummy data)
+  const [documents, setDocuments] = useState([
+    {
+      id: "1",
+      name: "Project Proposal.pdf",
+      uploadedAt: "2025-05-20",
+      size: "1.2 MB",
+    },
+    {
+      id: "2",
+      name: "Meeting Notes.docx",
+      uploadedAt: "2025-05-22",
+      size: "540 KB",
+    },
+  ]);
+
+  // Upload input state
+  const [uploadFile, setUploadFile] = useState(null);
+  const [confirmation, setConfirmation] = useState("");
+  const [qaOpen, setQaOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+
+  // Q&A state
+  const [qaMessages, setQaMessages] = useState([]); // {sender:'user'|'ai', text:''}
+  const [questionInput, setQuestionInput] = useState("");
+  const [loadingAnswer, setLoadingAnswer] = useState(false);
+
+  const qaContentRef = useRef(null);
+
+  // Scroll to bottom when new message arrives
+  useEffect(() => {
+    if (qaContentRef.current) {
+      qaContentRef.current.scrollTop = qaContentRef.current.scrollHeight;
+    }
+  }, [qaMessages]);
+
+  // Handle file upload
+  const handleUpload = () => {
+    if (!uploadFile) return alert("Please select a file to upload.");
+
+    // Simulate upload, parsing, and indexing with delay
+    setTimeout(() => {
+      // Add new document to list
+      const newDoc = {
+        id: Date.now().toString(),
+        name: uploadFile.name,
+        uploadedAt: new Date().toISOString().split("T")[0],
+        size: (uploadFile.size / 1024 / 1024).toFixed(2) + " MB",
+      };
+      setDocuments((prev) => [newDoc, ...prev]);
+      setUploadFile(null);
+      setConfirmation(
+        `"${newDoc.name}" uploaded, parsed, and indexed successfully!`
+      );
+
+      // Clear confirmation after 5 sec
+      setTimeout(() => setConfirmation(""), 5000);
+    }, 1200);
+  };
+
+  // Handle document delete
+  const handleDelete = (docId) => {
+    if (window.confirm("Are you sure you want to delete this document?")) {
+      setDocuments((prev) => prev.filter((doc) => doc.id !== docId));
+      setConfirmation("Document deleted successfully.");
+      setTimeout(() => setConfirmation(""), 4000);
+
+      if (selectedDoc?.id === docId) {
+        setQaOpen(false);
+        setSelectedDoc(null);
+        setQaMessages([]);
+      }
+    }
+  };
+
+  // Handle document download (simulate)
+  const handleDownload = (doc) => {
+    alert(`Starting download for "${doc.name}"`);
+    // Implement real download logic here
+  };
+
+  // Open Q&A modal for document
+  const openQA = (doc) => {
+    setSelectedDoc(doc);
+    setQaMessages([]);
+    setQaOpen(true);
+    setQuestionInput("");
+  };
+
+  // Close Q&A modal
+  const closeQA = () => {
+    setQaOpen(false);
+    setSelectedDoc(null);
+    setQaMessages([]);
+    setQuestionInput("");
+  };
+
+  // Simulate AI answer generation (replace with real API call)
+  const getAIAnswer = async (question) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(
+          `This is a simulated answer for your question: "${question}" based on the document "${selectedDoc.name}".`
+        );
+      }, 1500);
+    });
+  };
+
+  // Handle question submit
+  const submitQuestion = async () => {
+    if (!questionInput.trim()) return;
+    const question = questionInput.trim();
+    setQaMessages((msgs) => [...msgs, { sender: "user", text: question }]);
+    setQuestionInput("");
+    setLoadingAnswer(true);
+
+    const answer = await getAIAnswer(question);
+
+    setQaMessages((msgs) => [...msgs, { sender: "ai", text: answer }]);
+    setLoadingAnswer(false);
+  };
+
   return (
-    <Box
-      style={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #64b5f6 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-      }}
-    >
-      <Container size={480} px="xs">
-        <Transition transition="slide-up" duration={600} mounted={true}>
-          {(styles) => (
-            <Paper
-              shadow="xl"
-              radius="xl"
-              p="xl"
-              style={{
-                ...styles,
-                background:
-                  "linear-gradient(120deg, rgba(255,255,255,0.97) 70%, #e3f2fd 100%)",
-                border: "2px solid #90caf9",
-                boxShadow: "0 8px 32px 0 rgba(30,60,114,0.15)",
-              }}
-            >
-              <Group position="apart" mb="md">
-                <Title
-                  order={2}
-                  style={{
-                    fontWeight: 800,
-                    color: "#1e3c72",
-                    letterSpacing: rem(1),
-                  }}
+    <div className="dashboard-wrapper">
+      <header className="header">
+        <div className="user-info">
+          <div className="user-name">Welcome, {user.name}!</div>
+          <div className="user-email">{user.email}</div>
+        </div>
+        <button className="action-btn" onClick={logout}>
+          Logout
+        </button>
+      </header>
+
+      {confirmation && <div className="confirmation">{confirmation}</div>}
+
+      <section className="upload-section">
+        <input
+          type="file"
+          onChange={(e) => setUploadFile(e.target.files[0])}
+          value={uploadFile ? undefined : ""}
+        />
+        <button onClick={handleUpload}>Upload Document</button>
+      </section>
+
+      <section className="documents-container">
+        <table className="documents-table">
+          <thead>
+            <tr>
+              <th>Document Name</th>
+              <th>Uploaded At</th>
+              <th>Size</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documents.length === 0 ? (
+              <tr>
+                <td
+                  colSpan="4"
+                  style={{ textAlign: "center", padding: "1.5rem" }}
                 >
-                  Welcome, {user?.username || "User"}!
-                </Title>
-                <Button
-                  variant="gradient"
-                  gradient={{ from: "red", to: "orange", deg: 90 }}
-                  leftSection={<IconLogout size={18} />}
-                  onClick={logout}
-                  size="md"
-                  radius="xl"
-                  style={{ fontWeight: 600 }}
-                >
-                  Logout
-                </Button>
-              </Group>
-              <Group position="center" mb="md">
-                <Avatar
-                  size={100}
-                  radius="xl"
-                  style={{
-                    border: "4px solid #1976d2",
-                    background:
-                      "linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)",
-                    boxShadow: "0 4px 16px 0 rgba(30,60,114,0.10)",
-                  }}
-                >
-                  <IconUser size={56} color="#fff" />
-                </Avatar>
-              </Group>
-              <Text
-                align="center"
-                size="xl"
-                fw={700}
-                color="#1e3c72"
-                mb={4}
-                style={{ letterSpacing: rem(0.5) }}
-              >
-                {user?.username || "No username"}
-              </Text>
-              <Text align="center" size="md" color="dimmed" mb="xs">
-                {user?.email || "No email"}
-              </Text>
-              <Divider my="lg" color="#90caf9" />
-              <Group position="center" spacing="xl" mb="md">
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconFileText size={36} color="#1976d2" />
-                  <Text size="sm" color="#1976d2" mt={4}>
-                    View Documents
-                  </Text>
-                </Box>
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconCloudUpload size={36} color="#1976d2" />
-                  <Text size="sm" color="#1976d2" mt={4}>
-                    Upload New
-                  </Text>
-                </Box>
-              </Group>
-              <Text
-                align="center"
-                mt="lg"
-                color="blue"
-                style={{
-                  fontStyle: "italic",
-                  fontWeight: 500,
-                  fontSize: rem(18),
-                  textShadow: "0 2px 8px #e3f2fd",
+                  No documents uploaded yet.
+                </td>
+              </tr>
+            ) : (
+              documents.map((doc) => (
+                <tr key={doc.id}>
+                  <td>{doc.name}</td>
+                  <td>{doc.uploadedAt}</td>
+                  <td>{doc.size}</td>
+                  <td>
+                    <button className="action-btn" onClick={() => openQA(doc)}>
+                      View / Q&A
+                    </button>
+                    <button
+                      className="action-btn"
+                      onClick={() => handleDownload(doc)}
+                    >
+                      Download
+                    </button>
+                    <button
+                      className="action-btn"
+                      onClick={() => handleDelete(doc.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </section>
+
+      {qaOpen && (
+        <div className="modal-backdrop" onClick={closeQA}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Q&A: {selectedDoc.name}</h3>
+              <button className="close-btn" onClick={closeQA}>
+                &times;
+              </button>
+            </div>
+
+            <div className="qa-content" ref={qaContentRef}>
+              {qaMessages.length === 0 ? (
+                <p style={{ fontStyle: "italic", color: "#6b7280" }}>
+                  Ask a question about this document.
+                </p>
+              ) : (
+                qaMessages.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`qa-message ${
+                      msg.sender === "user" ? "user" : "ai"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="qa-input-container">
+              <input
+                type="text"
+                placeholder="Type your question here..."
+                value={questionInput}
+                onChange={(e) => setQuestionInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !loadingAnswer) submitQuestion();
                 }}
+                disabled={loadingAnswer}
+              />
+              <button
+                onClick={submitQuestion}
+                disabled={loadingAnswer || !questionInput.trim()}
               >
-                You can now upload and interact with your documents using AI!
-              </Text>
-            </Paper>
-          )}
-        </Transition>
-      </Container>
-    </Box>
+                {loadingAnswer ? "Waiting..." : "Ask"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
-};
+}
 
 export default Dashboard;
