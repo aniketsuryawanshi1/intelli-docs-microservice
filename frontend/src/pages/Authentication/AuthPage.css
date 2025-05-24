@@ -44,7 +44,26 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  color: #1e3a8a;
+}
+
+.wave-emoji {
+  animation: wave 2.5s infinite;
+  display: inline-block;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(15deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
 }
 
 .input-group {
@@ -66,6 +85,12 @@
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  color: #2563eb;
 }
 
 .input-lg {
@@ -107,6 +132,32 @@
   gap: 0.6rem;
   box-shadow: 0 6px 15px rgba(99, 102, 241, 0.5);
   transition: background 0.3s ease;
+}
+
+.login-prompt {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.login-prompt a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-prompt {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.register-prompt a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .btn-auth:hover:not(:disabled) {

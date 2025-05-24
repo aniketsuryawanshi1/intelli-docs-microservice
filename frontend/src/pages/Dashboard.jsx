@@ -8,8 +8,16 @@ import {
   Title,
   Paper,
   Box,
+  Divider,
+  Transition,
+  rem,
 } from "@mantine/core";
-import { IconLogout, IconUser } from "@tabler/icons-react";
+import {
+  IconLogout,
+  IconUser,
+  IconFileText,
+  IconCloudUpload,
+} from "@tabler/icons-react";
 import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
@@ -19,64 +27,122 @@ const Dashboard = () => {
     <Box
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
+        background:
+          "linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #64b5f6 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        padding: "2rem",
       }}
     >
-      <Container size="sm">
-        <Paper
-          shadow="xl"
-          radius="lg"
-          p="xl"
-          style={{
-            background:
-              "linear-gradient(120deg, rgba(255,255,255,0.95) 60%, #e3f2fd 100%)",
-            border: "1px solid #90caf9",
-          }}
-        >
-          <Group position="apart" mb="md">
-            <Title order={2} color="#1e3c72" style={{ fontWeight: 700 }}>
-              Welcome, {user?.username || "User"}!
-            </Title>
-            <Button
-              variant="gradient"
-              gradient={{ from: "red", to: "orange", deg: 90 }}
-              leftIcon={<IconLogout size={18} />}
-              onClick={logout}
-            >
-              Logout
-            </Button>
-          </Group>
-          <Group position="center" mb="md">
-            <Avatar
-              size={90}
+      <Container size={480} px="xs">
+        <Transition transition="slide-up" duration={600} mounted={true}>
+          {(styles) => (
+            <Paper
+              shadow="xl"
               radius="xl"
-              color="blue"
+              p="xl"
               style={{
-                border: "3px solid #1976d2",
-                background: "linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)",
+                ...styles,
+                background:
+                  "linear-gradient(120deg, rgba(255,255,255,0.97) 70%, #e3f2fd 100%)",
+                border: "2px solid #90caf9",
+                boxShadow: "0 8px 32px 0 rgba(30,60,114,0.15)",
               }}
             >
-              <IconUser size={48} color="#fff" />
-            </Avatar>
-          </Group>
-          <Text align="center" size="xl" weight={600} color="#1e3c72" mb={4}>
-            {user?.username || "No username"}
-          </Text>
-          <Text align="center" size="md" color="dimmed">
-            {user?.email || "No email"}
-          </Text>
-          <Text
-            align="center"
-            mt="lg"
-            color="blue"
-            style={{ fontStyle: "italic" }}
-          >
-            You can now upload and interact with your documents using AI!
-          </Text>
-        </Paper>
+              <Group position="apart" mb="md">
+                <Title
+                  order={2}
+                  style={{
+                    fontWeight: 800,
+                    color: "#1e3c72",
+                    letterSpacing: rem(1),
+                  }}
+                >
+                  Welcome, {user?.username || "User"}!
+                </Title>
+                <Button
+                  variant="gradient"
+                  gradient={{ from: "red", to: "orange", deg: 90 }}
+                  leftSection={<IconLogout size={18} />}
+                  onClick={logout}
+                  size="md"
+                  radius="xl"
+                  style={{ fontWeight: 600 }}
+                >
+                  Logout
+                </Button>
+              </Group>
+              <Group position="center" mb="md">
+                <Avatar
+                  size={100}
+                  radius="xl"
+                  style={{
+                    border: "4px solid #1976d2",
+                    background:
+                      "linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)",
+                    boxShadow: "0 4px 16px 0 rgba(30,60,114,0.10)",
+                  }}
+                >
+                  <IconUser size={56} color="#fff" />
+                </Avatar>
+              </Group>
+              <Text
+                align="center"
+                size="xl"
+                fw={700}
+                color="#1e3c72"
+                mb={4}
+                style={{ letterSpacing: rem(0.5) }}
+              >
+                {user?.username || "No username"}
+              </Text>
+              <Text align="center" size="md" color="dimmed" mb="xs">
+                {user?.email || "No email"}
+              </Text>
+              <Divider my="lg" color="#90caf9" />
+              <Group position="center" spacing="xl" mb="md">
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconFileText size={36} color="#1976d2" />
+                  <Text size="sm" color="#1976d2" mt={4}>
+                    View Documents
+                  </Text>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconCloudUpload size={36} color="#1976d2" />
+                  <Text size="sm" color="#1976d2" mt={4}>
+                    Upload New
+                  </Text>
+                </Box>
+              </Group>
+              <Text
+                align="center"
+                mt="lg"
+                color="blue"
+                style={{
+                  fontStyle: "italic",
+                  fontWeight: 500,
+                  fontSize: rem(18),
+                  textShadow: "0 2px 8px #e3f2fd",
+                }}
+              >
+                You can now upload and interact with your documents using AI!
+              </Text>
+            </Paper>
+          )}
+        </Transition>
       </Container>
     </Box>
   );

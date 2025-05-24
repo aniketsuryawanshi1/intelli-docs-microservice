@@ -1,13 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUser, logoutUser } from "./authThunks";
 
+// Read from localStorage
+const user = JSON.parse(localStorage.getItem("user"));
+const accessToken = localStorage.getItem("accessToken");
+const refreshToken = localStorage.getItem("refreshToken");
+
 const initialState = {
-  user: null,
-  accessToken: null,
-  refreshToken: null,
+  user: user || null,
+  accessToken: accessToken || null,
+  refreshToken: refreshToken || null,
   loading: false,
   error: null,
-  isAuthenticated: false,
+  isAuthenticated: !!accessToken,
 };
 
 const authSlice = createSlice({
@@ -16,9 +21,13 @@ const authSlice = createSlice({
   reducers: {
     setUser(state, action) {
       state.user = action.payload.user;
-      state.accessToken = action.payload.access;
-      state.refreshToken = action.payload.refresh;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
       state.isAuthenticated = true;
+      // Persist to localStorage
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("accessToken", action.payload.accessToken);
+      localStorage.setItem("refreshToken", action.payload.refreshToken);
     },
     clearUser(state) {
       state.user = null;
@@ -26,6 +35,10 @@ const authSlice = createSlice({
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.error = null;
+      // Remove from localStorage
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     },
   },
   extraReducers: (builder) => {
@@ -41,6 +54,10 @@ const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
+        // Persist to localStorage
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("accessToken", action.payload.accessToken);
+        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -57,6 +74,10 @@ const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
+        // Persist to localStorage
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("accessToken", action.payload.accessToken);
+        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -70,6 +91,10 @@ const authSlice = createSlice({
         state.refreshToken = null;
         state.isAuthenticated = false;
         state.error = null;
+        // Remove from localStorage
+        localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
       });
   },
 });

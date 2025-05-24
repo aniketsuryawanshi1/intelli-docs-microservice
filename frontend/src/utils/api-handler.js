@@ -4,16 +4,14 @@ import dayjs from "dayjs";
 
 const BASE_URL = "http://localhost:8000/api/";
 
-const getTokenFromStorage = (key) => {
-  const storedToken = localStorage.getItem(key);
-  if (storedToken && storedToken !== "undefined") {
-    return storedToken;
-  }
-  return "";
+// Helper to get token from localStorage
+const getToken = (key) => {
+  const token = localStorage.getItem(key);
+  return token && token !== "undefined" ? token : null;
 };
 
-let accessToken = getTokenFromStorage("token");
-let refreshToken = getTokenFromStorage("refresh_token");
+let accessToken = getToken("accessToken");
+let refreshToken = getToken("refreshToken");
 
 const AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -23,25 +21,37 @@ const AxiosInstance = axios.create({
   },
 });
 
-// Request Interceptor
+// Helper to update tokens in memory and headers
+export function setAuthToken(token) {
+  accessToken = token;
+  if (token) {
+    AxiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete AxiosInstance.defaults.headers.common["Authorization"];
+  }
+}
+
+// Request Interceptor: Refresh token if expired
 AxiosInstance.interceptors.request.use(
   async (req) => {
+    accessToken = getToken("accessToken");
+    refreshToken = getToken("refreshToken");
+
     if (accessToken) {
       try {
-        const user = jwtDecode(accessToken);
-        const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
+        const decoded = jwtDecode(accessToken);
+        const isExpired = dayjs.unix(decoded.exp).diff(dayjs()) < 1;
 
         if (!isExpired) {
           req.headers.Authorization = `Bearer ${accessToken}`;
           return req;
         }
 
-        console.log("Access token expired, attempting to refresh...");
-
+        // Token expired, try to refresh
         if (!refreshToken) {
-          console.error("No refresh token available, redirecting to login.");
-          localStorage.removeItem("token");
-          localStorage.removeItem("refresh_token");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
           window.location.href = "/login";
           return Promise.reject("No refresh token");
         }
@@ -52,42 +62,32 @@ AxiosInstance.interceptors.request.use(
 
         if (response.data.access) {
           const newAccessToken = response.data.access;
-          localStorage.setItem("token", newAccessToken);
+          localStorage.setItem("accessToken", newAccessToken);
+          setAuthToken(newAccessToken);
           req.headers.Authorization = `Bearer ${newAccessToken}`;
-          accessToken = newAccessToken;
-          console.log("Token refreshed successfully");
           return req;
         }
       } catch (error) {
-        console.error(
-          "Token refresh failed:",
-          error.response?.data || error.message
-        );
-        localStorage.removeItem("token");
-        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
         window.location.href = "/login";
         return Promise.reject(error);
       }
     }
     return req;
   },
-  (error) => {
-    console.error("Request error:", error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response Interceptor
+// Response Interceptor: Log errors
 AxiosInstance.interceptors.response.use(
-  (response) => {
-    console.log("Response received:", response);
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response) {
-      console.error("Response error:", error.response.data);
+      console.error("API Error:", error.response.data);
     } else {
-      console.error("Network or other error:", error.message);
+      console.error("Network Error:", error.message);
     }
     return Promise.reject(error);
   }

@@ -79,6 +79,7 @@ const RegisterForm = () => {
       />
       <AuthInput
         label="Password"
+        id="password"
         type="password"
         name="password"
         value={form.password}
@@ -91,6 +92,7 @@ const RegisterForm = () => {
       />
       <AuthInput
         label="Confirm Password"
+        id="password2"
         type="password"
         name="password2"
         value={form.password2}

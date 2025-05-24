@@ -4,7 +4,7 @@ import { loginUser } from "../../features/auth/authThunks";
 import { useNavigate } from "react-router-dom";
 import AuthInput from "./AuthInput";
 import LoadingOverlay from "./LoadingOverlay";
-import { IconUserCircle, IconKey } from "@tabler/icons-react";
+import { IconUserCircle, IconKey, IconArrowRight } from "@tabler/icons-react";
 import Swal from "sweetalert2";
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -52,6 +52,7 @@ const LoginForm = () => {
       />
       <AuthInput
         label="Password"
+        id="password"
         type="password"
         name="password"
         value={form.password}
@@ -63,6 +64,7 @@ const LoginForm = () => {
         IconComponent={IconKey} // <-- pass key icon here
       />
       <button type="submit" className="btn-auth" disabled={loading}>
+        <IconArrowRight size={20} className="btn-icon" />
         {loading ? "Logging in..." : "Login"}
       </button>
 
